@@ -3,12 +3,24 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useState } from "react";
+import { toast } from "react-toastify";
 import { useFitLog } from "../../context/FitLogContext";
 
 export default function MyPlan() {
   const { plan, saved, removeFromPlan } = useFitLog();
 
-  const [activeTab, setActiveTab] = useState<"plan" | "saved">("plan");
+  const [activeTab, setActiveTab] =
+    useState<"plan" | "saved">("plan");
+
+  function handleDone(id: number) {
+    removeFromPlan(id);
+    toast.success("Workout marked as done.");
+  }
+
+  function handleRemove(id: number) {
+    removeFromPlan(id);
+    toast.success("Workout removed from today's plan.");
+  }
 
   return (
     <main className="min-h-screen bg-[#111] px-6 py-12 text-white">
@@ -31,41 +43,44 @@ export default function MyPlan() {
 
         {/* Metrics */}
         <div className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-3">
-<div className="border border-gray-800 p-6">
-  <p className="text-sm uppercase text-gray-500">
-    Exercises
-  </p>
 
-  <p className="mt-2 text-3xl font-extrabold">
-    {plan.length}
-  </p>
-</div>
+          <div className="border border-gray-800 p-6">
+            <p className="text-sm uppercase text-gray-500">
+              Exercises
+            </p>
 
-<div className="border border-gray-800 p-6">
-  <p className="text-sm uppercase text-gray-500">
-    Minutes
-  </p>
+            <p className="mt-2 text-3xl font-extrabold">
+              {plan.length}
+            </p>
+          </div>
 
-  <p className="mt-2 text-3xl font-extrabold">
-    {plan.reduce(
-      (total, workout) => total + workout.duration,
-      0
-    )}
-  </p>
-</div>
+          <div className="border border-gray-800 p-6">
+            <p className="text-sm uppercase text-gray-500">
+              Minutes
+            </p>
 
-<div className="border border-gray-800 p-6">
-  <p className="text-sm uppercase text-gray-500">
-    Calories
-  </p>
+            <p className="mt-2 text-3xl font-extrabold">
+              {plan.reduce(
+                (total, workout) => total + workout.duration,
+                0
+              )}
+            </p>
+          </div>
 
-  <p className="mt-2 text-3xl font-extrabold">
-    {plan.reduce(
-      (total, workout) => total + workout.caloriesBurned,
-      0
-    )}
-  </p>
-</div>
+          <div className="border border-gray-800 p-6">
+            <p className="text-sm uppercase text-gray-500">
+              Calories
+            </p>
+
+            <p className="mt-2 text-3xl font-extrabold">
+              {plan.reduce(
+                (total, workout) =>
+                  total + workout.caloriesBurned,
+                0
+              )}
+            </p>
+          </div>
+
         </div>
 
         {/* DaisyUI Tabs */}
@@ -192,18 +207,14 @@ export default function MyPlan() {
                         </Link>
 
                         <button
-                          onClick={() =>
-                            removeFromPlan(workout.id)
-                          }
+                          onClick={() => handleDone(workout.id)}
                           className="btn btn-outline border-gray-600 text-white"
                         >
                           MARK AS DONE
                         </button>
 
                         <button
-                          onClick={() =>
-                            removeFromPlan(workout.id)
-                          }
+                          onClick={() => handleRemove(workout.id)}
                           className="btn btn-square btn-outline border-gray-600 text-white"
                         >
                           ×

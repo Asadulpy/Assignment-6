@@ -10,6 +10,7 @@ export default function Navbar() {
 
   const isWorkoutActive = pathname === "/";
   const isPlanActive = pathname === "/my-plan";
+  
 
   return (
     <header className="border-b border-gray-800 bg-[#111111] text-white">
@@ -44,7 +45,7 @@ export default function Navbar() {
             </Link>
 
             <Link
-              href="/my-plan"
+              href="/saved"
               className={`text-sm font-bold uppercase tracking-wide transition ${
                 isPlanActive
                   ? "text-[#ccff00]"

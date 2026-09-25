@@ -1,5 +1,6 @@
 "use client";
 
+import { toast } from "react-toastify";
 import type { Workout } from "../types/workout";
 import { useFitLog } from "../context/FitLogContext";
 
@@ -13,13 +14,13 @@ export default function WorkoutActions({
   const { addToPlan, saveWorkout } = useFitLog();
 
   function handleAddToPlan() {
-    console.log("Adding workout:", workout.name);
     addToPlan(workout);
+    toast.success("Workout added to today's plan.");
   }
 
   function handleSave() {
-    console.log("Saving workout:", workout.name);
     saveWorkout(workout);
+    toast.success("Workout saved for later.");
   }
 
   return (
