@@ -87,4 +87,9 @@
   .hero-image {
     height: 400px;
   }
+  body {
+  margin: 0;
+  background: #111111;
+  color: white;
+}
 }

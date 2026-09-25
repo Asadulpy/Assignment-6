@@ -13,10 +13,12 @@ export default function WorkoutActions({
   const { addToPlan, saveWorkout } = useFitLog();
 
   function handleAddToPlan() {
+    console.log("Adding workout:", workout.name);
     addToPlan(workout);
   }
 
   function handleSave() {
+    console.log("Saving workout:", workout.name);
     saveWorkout(workout);
   }
 
