@@ -9,26 +9,18 @@ export default async function Home() {
   return (
     <>
       <Navbar />
-
       <Hero />
 
       <main id="library" className="library">
         <div className="library-header">
           <p>THE LIBRARY</p>
-
           <h2>THE LIBRARY</h2>
-
-          <p>
-            Twelve lifts covering every major muscle group.
-          </p>
+          <p>Twelve lifts covering every major muscle group.</p>
         </div>
 
         <div className="workout-grid">
           {workouts.map((workout) => (
-            <WorkoutCard
-              key={workout.id}
-              workout={workout}
-            />
+            <WorkoutCard key={workout.id} workout={workout} />
           ))}
         </div>
       </main>

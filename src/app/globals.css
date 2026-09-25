@@ -1,3 +1,6 @@
+@import "tailwindcss";
+@plugin "daisyui";
+
 .hero {
   min-height: 650px;
   display: grid;
