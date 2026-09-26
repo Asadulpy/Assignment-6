@@ -26,7 +26,7 @@ export default function Footer() {
 
         {/* Copyright */}
         <p className="text-sm text-gray-500">
-          © 2026 FITLOG.Workout Library. Train hard, log honest.
+          © 2026 FitLog — Workout Library. Train hard, log honest.
         </p>
 
       </div>

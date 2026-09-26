@@ -11,6 +11,23 @@ export default function MyPlan() {
 
   const [activeTab, setActiveTab] =
     useState<"plan" | "saved">("plan");
+  const [sortBy, setSortBy] = useState<
+    "duration" | "calories" | "rating"
+  >("duration");
+
+  const currentWorkouts = activeTab === "plan" ? plan : saved;
+
+  const sortedWorkouts = [...currentWorkouts].sort((a, b) => {
+    if (sortBy === "duration") {
+      return a.duration - b.duration;
+    }
+
+    if (sortBy === "calories") {
+      return a.caloriesBurned - b.caloriesBurned;
+    }
+
+    return a.rating - b.rating;
+  });
 
   function handleDone(id: number) {
     removeFromPlan(id);
@@ -80,20 +97,19 @@ export default function MyPlan() {
 
         </div>
 
-        {/* Tabs */}
-        <div className="mt-6">
+        {/* Tabs + Sort */}
+        <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div
             role="tablist"
-            className="inline-flex rounded-lg border border-gray-800 bg-[#15181e] p-1"
+            className="inline-flex w-fit rounded-lg border border-gray-800 bg-[#15181e] p-1"
           >
             <button
               role="tab"
               onClick={() => setActiveTab("plan")}
-              className={`rounded-md px-4 py-2 text-xs font-bold transition ${
-                activeTab === "plan"
+              className={`rounded-md px-4 py-2 text-xs font-bold transition ${activeTab === "plan"
                   ? "bg-[#20242c] text-white"
                   : "text-gray-500 hover:text-white"
-              }`}
+                }`}
             >
               TODAY&apos;S PLAN
             </button>
@@ -101,14 +117,37 @@ export default function MyPlan() {
             <button
               role="tab"
               onClick={() => setActiveTab("saved")}
-              className={`rounded-md px-4 py-2 text-xs font-bold transition ${
-                activeTab === "saved"
+              className={`rounded-md px-4 py-2 text-xs font-bold transition ${activeTab === "saved"
                   ? "bg-[#20242c] text-white"
                   : "text-gray-500 hover:text-white"
-              }`}
+                }`}
             >
               SAVED
             </button>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <label htmlFor="sort" className="text-xs text-gray-500">
+              Sort By
+            </label>
+
+            <select
+              id="sort"
+              value={sortBy}
+              onChange={(event) =>
+                setSortBy(
+                  event.target.value as
+                  | "duration"
+                  | "calories"
+                  | "rating"
+                )
+              }
+              className="rounded-lg border border-gray-800 bg-[#15181e] px-3 py-2 text-xs text-white outline-none"
+            >
+              <option value="duration">Duration</option>
+              <option value="calories">Calories</option>
+              <option value="rating">Rating</option>
+            </select>
           </div>
         </div>
 
@@ -138,7 +177,7 @@ export default function MyPlan() {
             ) : (
               <div className="space-y-3">
 
-                {plan.map((workout) => (
+                {sortedWorkouts.map((workout) => (
                   <div
                     key={workout.id}
                     className="flex flex-col gap-4 rounded-xl border border-gray-800 bg-[#15181e] p-3 sm:flex-row sm:items-center"
@@ -243,7 +282,7 @@ export default function MyPlan() {
             ) : (
               <div className="space-y-3">
 
-                {saved.map((workout) => (
+                {sortedWorkouts.map((workout) => (
                   <div
                     key={workout.id}
                     className="flex flex-col gap-4 rounded-xl border border-gray-800 bg-[#15181e] p-3 sm:flex-row sm:items-center"
