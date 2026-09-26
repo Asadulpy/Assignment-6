@@ -14,13 +14,31 @@ export default function WorkoutActions({
   const { addToPlan, saveWorkout } = useFitLog();
 
   function handleAddToPlan() {
-    addToPlan(workout);
-    toast.success("Workout added to today's plan.");
+    const result = addToPlan(workout);
+
+    if (result === "success") {
+      toast.success("Workout added to today's plan.");
+    }
+
+    if (result === "duplicate") {
+      toast.error("This workout is already in today's plan.");
+    }
+
+    if (result === "full") {
+      toast.error("Today's plan is full. Maximum 5 workouts.");
+    }
   }
 
   function handleSave() {
-    saveWorkout(workout);
-    toast.success("Workout saved for later.");
+    const result = saveWorkout(workout);
+
+    if (result === "success") {
+      toast.success("Workout saved for later.");
+    }
+
+    if (result === "duplicate") {
+      toast.error("This workout is already saved.");
+    }
   }
 
   return (

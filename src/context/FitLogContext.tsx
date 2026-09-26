@@ -10,46 +10,30 @@ import type { Workout } from "../types/workout";
 interface FitLogContextType {
   plan: Workout[];
   saved: Workout[];
-  addToPlan: (workout: Workout) => void;
-  saveWorkout: (workout: Workout) => void;
+  addToPlan: (workout: Workout) => "success" | "duplicate" | "full";
+  saveWorkout: (workout: Workout) => "success" | "duplicate";
   removeFromPlan: (workoutId: number) => void;
 }
 
-const FitLogContext = createContext<FitLogContextType | undefined>(
-  undefined
-);
-
-// -----------------------------
-// Cached store values
-// -----------------------------
+const FitLogContext = createContext<FitLogContextType | undefined>(undefined);
 
 const emptyWorkouts: Workout[] = [];
 
 let planSnapshot: Workout[] = emptyWorkouts;
 let savedSnapshot: Workout[] = emptyWorkouts;
 
-// Load localStorage on the client
 if (typeof window !== "undefined") {
   try {
     const storedPlan = localStorage.getItem("fitlog-plan");
     const storedSaved = localStorage.getItem("fitlog-saved");
 
-    planSnapshot = storedPlan
-      ? JSON.parse(storedPlan)
-      : emptyWorkouts;
-
-    savedSnapshot = storedSaved
-      ? JSON.parse(storedSaved)
-      : emptyWorkouts;
+    planSnapshot = storedPlan ? JSON.parse(storedPlan) : emptyWorkouts;
+    savedSnapshot = storedSaved ? JSON.parse(storedSaved) : emptyWorkouts;
   } catch {
     planSnapshot = emptyWorkouts;
     savedSnapshot = emptyWorkouts;
   }
 }
-
-// -----------------------------
-// Subscribers
-// -----------------------------
 
 const listeners = new Set<() => void>();
 
@@ -65,10 +49,6 @@ function notify() {
   listeners.forEach((listener) => listener());
 }
 
-// -----------------------------
-// Snapshots
-// -----------------------------
-
 function getPlanSnapshot() {
   return planSnapshot;
 }
@@ -80,10 +60,6 @@ function getSavedSnapshot() {
 function getServerSnapshot() {
   return emptyWorkouts;
 }
-
-// -----------------------------
-// Provider
-// -----------------------------
 
 export function FitLogProvider({
   children,
@@ -102,42 +78,44 @@ export function FitLogProvider({
     getServerSnapshot
   );
 
-  function addToPlan(workout: Workout) {
-    if (planSnapshot.length >= 5) {
-      return;
+  function addToPlan(
+    workout: Workout
+  ): "success" | "duplicate" | "full" {
+    if (planSnapshot.some((item) => item.id === workout.id)) {
+      return "duplicate";
     }
 
-    if (planSnapshot.some((item) => item.id === workout.id)) {
-      return;
+    if (planSnapshot.length >= 5) {
+      return "full";
     }
 
     const updatedPlan = [...planSnapshot, workout];
 
     planSnapshot = updatedPlan;
 
-    localStorage.setItem(
-      "fitlog-plan",
-      JSON.stringify(updatedPlan)
-    );
+    localStorage.setItem("fitlog-plan", JSON.stringify(updatedPlan));
 
     notify();
+
+    return "success";
   }
 
-  function saveWorkout(workout: Workout) {
+  function saveWorkout(
+    workout: Workout
+  ): "success" | "duplicate" {
     if (savedSnapshot.some((item) => item.id === workout.id)) {
-      return;
+      return "duplicate";
     }
 
     const updatedSaved = [...savedSnapshot, workout];
 
     savedSnapshot = updatedSaved;
 
-    localStorage.setItem(
-      "fitlog-saved",
-      JSON.stringify(updatedSaved)
-    );
+    localStorage.setItem("fitlog-saved", JSON.stringify(updatedSaved));
 
     notify();
+
+    return "success";
   }
 
   function removeFromPlan(workoutId: number) {
@@ -147,10 +125,7 @@ export function FitLogProvider({
 
     planSnapshot = updatedPlan;
 
-    localStorage.setItem(
-      "fitlog-plan",
-      JSON.stringify(updatedPlan)
-    );
+    localStorage.setItem("fitlog-plan", JSON.stringify(updatedPlan));
 
     notify();
   }
@@ -170,17 +145,11 @@ export function FitLogProvider({
   );
 }
 
-// -----------------------------
-// Hook
-// -----------------------------
-
 export function useFitLog() {
   const context = useContext(FitLogContext);
 
   if (!context) {
-    throw new Error(
-      "useFitLog must be used inside FitLogProvider"
-    );
+    throw new Error("useFitLog must be used inside FitLogProvider");
   }
 
   return context;

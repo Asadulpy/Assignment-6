@@ -4,9 +4,7 @@ const API_URL = "https://api.abcz.workers.dev/api/fitlog";
 
 export async function getWorkouts(): Promise<Workout[]> {
   const response = await fetch(API_URL, {
-    next: {
-      revalidate: 3600,
-    },
+    cache: "no-store",
   });
 
   if (!response.ok) {
@@ -18,9 +16,7 @@ export async function getWorkouts(): Promise<Workout[]> {
 
 export async function getWorkout(id: string): Promise<Workout> {
   const response = await fetch(`${API_URL}/${id}`, {
-    next: {
-      revalidate: 3600,
-    },
+    cache: "no-store",
   });
 
   if (!response.ok) {
